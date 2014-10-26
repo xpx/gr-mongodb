@@ -4,16 +4,21 @@
   <key>mongodb_mongosink</key>
   <category>mongodb</category>
   <import>import mongodb</import>
-  <make>mongodb.mongosink()</make>
+  <make>mongodb.mongosink($delay, $hist_samp)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
   <param>
-    <name>...</name>
-    <key>...</key>
-    <type>...</type>
+    <name>Delay</name>
+    <key>delay</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>History</name>
+    <key>hist_samp</key>
+    <type>int</type>
   </param>
 
   <!-- Make one 'sink' node per input. Sub-nodes:
@@ -22,17 +27,15 @@
        * vlen
        * optional (set to 1 for optional inputs) -->
   <sink>
-    <name>in</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <name>trigger</name>
+    <type>byte</type>
   </sink>
-
-  <!-- Make one 'source' node per output. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
-  <source>
-    <name>out</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
-  </source>
-</block>
+  <sink>
+    <name>samples</name>
+    <type>float</type>
+  </sink>
+  <sink>
+    <name>msg_bit</name>
+    <type>byte</type>
+  </sink>
+  </block>

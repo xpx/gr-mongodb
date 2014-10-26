@@ -19,22 +19,35 @@
 # Boston, MA 02110-1301, USA.
 # 
 
-import numpy
+import time
+import numpy as np
 from gnuradio import gr
+import pymongo
 
 class mongosink(gr.sync_block):
     """
     docstring for block mongosink
     """
-    def __init__(self):
+    def __init__(self, delay, hist_samp):
         gr.sync_block.__init__(self,
             name="mongosink",
-            in_sig=[<+numpy.float+>],
+            in_sig=[np.int8, np.float32, np.int8],
             out_sig=None)
+
+        self.set_history(hist_samp)
+        self.delay = delay
+        self.hist_samp = hist_samp
+
+        self.packets = pymongo.MongoClient('localhost')['gnu_adsb']['packets']
 
 
     def work(self, input_items, output_items):
         in0 = input_items[0]
-        # <+signal processing here+>
-        return len(input_items[0])
+        in1 = input_items[1]
+        in2 = input_items[2]
+        
+        for i in np.nonzero(in0[self.hist_samp:])[0]:
+            self.packets.save({'time': time.time(), 'samples': in1[i:i + self.hist_samp].tolist(), 'msg': in2[i - 112 * 4:i:4].tolist()})
 
+
+        return len(in1[:-self.hist_samp])
