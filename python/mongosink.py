@@ -31,12 +31,14 @@ class mongosink(gr.sync_block):
     def __init__(self, delay, hist_samp):
         gr.sync_block.__init__(self,
             name="mongosink",
-            in_sig=[np.int8, np.float32, np.int8],
+            in_sig=[np.int8, np.float32, np.float32, np.int8],
             out_sig=None)
 
         self.set_history(hist_samp)
         self.delay = delay
         self.hist_samp = hist_samp
+
+        self.tot_samples = 0
 
         self.packets = pymongo.MongoClient('localhost')['gnu_adsb']['packets']
 
@@ -45,9 +47,11 @@ class mongosink(gr.sync_block):
         in0 = input_items[0]
         in1 = input_items[1]
         in2 = input_items[2]
+        in3 = input_items[3]
         
         for i in np.nonzero(in0[self.hist_samp:])[0]:
-            self.packets.save({'time': time.time(), 'samples': in1[i:i + self.hist_samp].tolist(), 'msg': in2[i - 112 * 4:i:4].tolist()})
+            if self.tot_samples + i > 600:
+                self.packets.save({'time': time.time(), 'sample_nr': self.tot_samples + i, 'samples1': in1[i:i + self.hist_samp].tolist(), 'samples2': in2[i:i + self.hist_samp].tolist(), 'msg': in3[i - 112 * 4:i:4].tolist()})
 
-
+        self.tot_samples += len(in1[:-self.hist_samp])
         return len(in1[:-self.hist_samp])

@@ -31,7 +31,11 @@
     <type>byte</type>
   </sink>
   <sink>
-    <name>samples</name>
+    <name>samples 1</name>
+    <type>float</type>
+  </sink>
+  <sink>
+    <name>samples 2</name>
     <type>float</type>
   </sink>
   <sink>
