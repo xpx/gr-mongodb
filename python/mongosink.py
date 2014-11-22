@@ -51,7 +51,7 @@ class mongosink(gr.sync_block):
         
         for i in np.nonzero(in0[self.hist_samp:])[0]:
             if self.tot_samples + i > 600:
-                self.packets.save({'time': time.time(), 'sample_nr': self.tot_samples + i, 'samples1': in1[i:i + self.hist_samp].tolist(), 'samples2': in2[i:i + self.hist_samp].tolist(), 'msg': in3[i - 112 * 4:i:4].tolist()})
+                self.packets.save({'time': time.time(), 'sample_nr': self.tot_samples + i, 'samples1': in1[i:i + self.hist_samp].tolist(), 'samples2': in2[i:i + self.hist_samp].tolist(), 'msg': in3[i:i + self.hist_samp].tolist()})
 
         self.tot_samples += len(in1[:-self.hist_samp])
         return len(in1[:-self.hist_samp])
