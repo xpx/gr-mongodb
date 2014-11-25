@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<block>
+  <name>streamsink</name>
+  <key>mongodb_streamsink</key>
+  <category>mongodb</category>
+  <import>import mongodb</import>
+  <make>mongodb.streamsink($host, $database, $collection, $nfloatsinks, $before_trig, $after_trig)</make>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+  <param>
+    <name>Host</name>
+    <key>host</key>
+    <value>localhost</value>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Database</name>
+    <key>database</key>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Collection</name>
+    <key>collection</key>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Num float sinks</name>
+    <key>nfloatsinks</key>
+    <value>1</value>
+    <type>int</type>
+  </param>
+  <param>
+    <name>n samples before trigger</name>
+    <key>before_trig</key>
+    <value>1</value>
+    <type>int</type>
+  </param>
+  <param>
+    <name>n samples after trigger</name>
+    <key>after_trig</key>
+    <value>1</value>
+    <type>int</type>
+  </param>
+
+
+  <!-- Make one 'sink' node per input. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <sink>
+    <name>in_trigger_tag</name>
+    <type>float</type>
+  </sink>
+  <sink>
+    <name>in</name>
+    <type>float</type>
+    <nports>$nfloatsinks</nports>
+    <optional>1</optional>
+  </sink>
+
+</block>

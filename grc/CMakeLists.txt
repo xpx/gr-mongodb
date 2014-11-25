@@ -17,5 +17,6 @@
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 install(FILES
-    mongodb_mongosink.xml DESTINATION share/gnuradio/grc/blocks
+    mongodb_mongosink.xml
+    mongodb_streamsink.xml DESTINATION share/gnuradio/grc/blocks
 )

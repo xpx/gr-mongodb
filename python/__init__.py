@@ -32,4 +32,5 @@ except ImportError:
 
 # import any pure python here
 from mongosink import mongosink
+from streamsink import streamsink
 #
