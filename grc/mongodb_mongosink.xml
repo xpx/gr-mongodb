@@ -4,22 +4,49 @@
   <key>mongodb_mongosink</key>
   <category>mongodb</category>
   <import>import mongodb</import>
-  <make>mongodb.mongosink($delay, $hist_samp)</make>
+  <make>mongodb.mongosink($host, $database, $collection, $nfloatsinks, $before_trig, $after_trig)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
   <param>
-    <name>Delay</name>
-    <key>delay</key>
-    <type>int</type>
+    <name>Host</name>
+    <key>host</key>
+    <value>localhost</value>
+    <type>string</type>
   </param>
   <param>
-    <name>History</name>
-    <key>hist_samp</key>
-    <type>int</type>
+    <name>Database</name>
+    <key>database</key>
+    <type>string</type>
   </param>
+  <param>
+    <name>Collection</name>
+    <key>collection</key>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Num float sinks</name>
+    <key>nfloatsinks</key>
+    <value>1</value>
+    <type>int</type>
+  </param>  
+  <param>
+    <name>n samples before trigger</name>
+    <key>before_trig</key>
+    <value>1</value>
+    <type>int</type>
+    <hide>part</hide>
+  </param>
+  <param>
+    <name>n samples after trigger</name>
+    <key>after_trig</key>
+    <value>1</value>
+    <type>int</type>
+    <hide>part</hide>
+  </param>
+
 
   <!-- Make one 'sink' node per input. Sub-nodes:
        * name (an identifier for the GUI)
@@ -42,4 +69,5 @@
     <name>msg_bit</name>
     <type>byte</type>
   </sink>
+
   </block>

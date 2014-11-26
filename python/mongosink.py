@@ -28,20 +28,22 @@ class mongosink(gr.sync_block):
     """
     docstring for block mongosink
     """
-    def __init__(self, delay, hist_samp):
+    def __init__(self, host, database, collection, nfloatsinks, nsamp_before, nsamp_after):
         gr.sync_block.__init__(self,
             name="mongosink",
             in_sig=[np.int8, np.float32, np.float32, np.int8],
             out_sig=None)
 
-        self.set_history(hist_samp)
-        self.delay = delay
-        self.hist_samp = hist_samp
+        self.hist_samp = nsamp_before + nsamp_after
+        self.set_history(self.hist_samp)
+        self.nsamp_before = nsamp_before
+        self.nsamp_after = nsamp_after
 
-        self.tot_samples = 0
+        self.host = host
+        self.database = database
+        self.collection = collection
 
-        self.packets = pymongo.MongoClient('localhost')['gnu_adsb']['packets']
-
+        self.packets = pymongo.MongoClient(self.host)[self.database][self.collection]
 
     def work(self, input_items, output_items):
         in0 = input_items[0]
@@ -49,9 +51,10 @@ class mongosink(gr.sync_block):
         in2 = input_items[2]
         in3 = input_items[3]
         
-        for i in np.nonzero(in0[self.hist_samp:])[0]:
-            if self.tot_samples + i > 600:
-                self.packets.save({'time': time.time(), 'sample_nr': self.tot_samples + i, 'samples1': in1[i:i + self.hist_samp].tolist(), 'samples2': in2[i:i + self.hist_samp].tolist(), 'msg': in3[i:i + self.hist_samp].tolist()})
+        # All ones in in0 are triggers. TODO expand logic to also support a holdoff
+        for i in np.nonzero(in0[self.nsamp_before: -self.nsamp_after])[0]:
+            if self.nitems_read(0) + i > 600:
+                i += self.nsamp_before
+                self.packets.save({'time': time.time(), 'sample_nr': self.nitems_read(0) + i - self.hist_samp + 1, 'samples1': in1[i - self.nsamp_before:i + self.nsamp_after].tolist(), 'samples2': in2[i - self.nsamp_before:i + self.nsamp_after].tolist(), 'msg': in3[i - self.nsamp_before:i + self.nsamp_after].tolist()})
 
-        self.tot_samples += len(in1[:-self.hist_samp])
-        return len(in1[:-self.hist_samp])
+        return len(in0[self.hist_samp:])
